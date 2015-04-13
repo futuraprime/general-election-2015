@@ -1,0 +1,20 @@
+{
+  "name": "general-election-2015",
+  "version": "0.0.0",
+  "homepage": "https://github.com/futuraprime/general-election-2015",
+  "authors": [
+    "Evan Hensleigh <futuraprime@gmail.com>"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "deps",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "d3": "~3.5.5"
+  }
+}
