@@ -1,0 +1,126 @@
+.sans {
+  font-family: 'calluna-sans', Helvetica Neue, Helvetica, sans-serif;
+}
+.serif {
+  font-family: 'kepler-std', Georgia, serif;
+}
+.serif-display {
+  font-family: 'kepler-std-display', Georgia, serif;
+}
+
+body {
+  @extend .serif;
+  font-size: 20px;
+  line-height: 24px;
+  color: #222;
+}
+
+h1, h2, h3 {
+  @extend .serif-display;
+}
+
+em {
+  font-style: italic;
+}
+
+fslh(value) {
+  font-size: value;
+  line-height: value;
+}
+
+optimizeText() {
+  text-rendering: optimizeLegibility;
+  text-rendering: geometricPrecision;
+}
+
+h1 {
+  font-style: italic;
+  font-weight: 900;
+  fslh: 60px;
+  fslh: 8vw;
+
+  optimizeText();
+
+  @media (max-width: 480px) {
+    fslh: 11vw;
+  }
+
+  @media (min-width: 960px) {
+    fslh: 78px;
+  }
+}
+
+h2 {
+  font-weight: 400;
+  fslh: 28px;
+  fslh: 4vw;
+
+  text-rendering: optimizeLegibility;
+
+  @media (max-width: 480px) {
+    fslh: 6vw;
+  }
+
+  @media(min-width: 960px) {
+    fslh: 40px;
+  }
+}
+h3 {
+  fslh: 24px;
+  fslh: 4vw;
+
+  font-weight: 600;
+
+  @media (max-width: 480px) {
+    fslh: 24px;
+  }
+
+  @media(min-width: 960px) {
+    fslh: 32px;
+  }
+}
+
+h4 {
+  @extend .sans;
+}
+
+.major {
+  font-size: 10vw;
+  line-height: 14vw;
+}
+
+.intro-text, .section-text, p {
+  margin: 1em auto;
+  max-width: 35em;
+
+  &.left {
+    margin 1em auto 1em 0;
+  }
+  &.right {
+    margin: 1em 0 1em auto;
+  }
+}
+
+p + p,
+ul + p,
+h1 + p, h2 + p, h3 + p, h4 + p {
+  margin-top: 1em;
+}
+
+ul {
+  @extend .sans;
+  margin-left: 1em;
+  list-style: initial;
+  font-size: 16px;
+  line-height: 22px;
+  li {
+    margin-left: 1em;
+  }
+}
+
+.credits {
+  @extend .sans;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 400;
+}
