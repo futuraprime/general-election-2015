@@ -128,3 +128,24 @@ arcJoin.enter().append('svg:path')
   });
 arcJoin
   .attr('d', arc);
+
+// now we gotta lay out the seats, this should be fun...
+
+// first, we're gonna create an array of all the seats
+// in a real election, we might actually have this, with more data
+// too, like vote yields or whatever
+var seatArray = [];
+_.each(results, function(d) {
+  for(var i=0;i<d.seats;++i) {
+    seatArray.push({ key : d.key });
+  }
+});
+// and now we're gonna stack 'em
+var nester = d3.nest()
+  .key(function(d) { return d.key; });
+
+var nestedSeatArray = nester.entries(seatArray);
+
+// I think the approach here is to come up with a sort of polar grid-ish
+// thing and then assign them each places based on the index in the list
+// so we have a width per theta and we base things around that. maybe?
