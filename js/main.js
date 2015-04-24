@@ -162,10 +162,11 @@ partyJoin.enter().append('svg:g')
 var seatSize = 10;
 var seatSpace = 12;
 
-var ringRadii = _.range(50, 350, seatSpace);
+var ringRadii = _.range(50, 390, seatSpace);
 var ringSteps = _.map(ringRadii, function(v, idx) {
   return seatSpace / v;
 });
+var anglePadding = 0.01;
 
 function radToDeg(rad) { return 180 * rad / Math.PI; }
 
@@ -180,13 +181,16 @@ partyJoin.each(function(d) {
   var dataArc = _.find(partyArcs, function(pArc) {
     return pArc.data.key === d.key;
   });
+
+  var startAngle = dataArc.startAngle - anglePadding;
+  var endAngle = dataArc.endAngle + anglePadding;
   
   // so now we have start and end angles, now we've got to figure out
   // how many seats per arc
   // the length of the arc is r * angle width
   // console.log(50 * (dataArc.startAngle - dataArc.endAngle), d.key);
   var arcSeats = _.map(ringRadii, function(radius) {
-    var len = radius * (dataArc.startAngle - dataArc.endAngle);
+    var len = radius * (startAngle - endAngle);
     return Math.ceil(len / seatSpace);
   });
   var arcSeatTotals = _.map(arcSeats, function(v, idx) {
@@ -221,7 +225,7 @@ partyJoin.each(function(d) {
       var transformString = '';
       var rank = _.findIndex(arcSeatTotals, function(v) { return v > idx; });
       var position = idx - (arcSeatTotals[rank - 1] || 0);
-      var angle = dataArc.endAngle;
+      var angle = endAngle;
       angle += position * ringSteps[rank];
       transformString += 'rotate('+(180 + radToDeg(angle))+')';
       transformString += 'translate(0,'+(50 + rank * seatSpace)+')';
