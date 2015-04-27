@@ -210,17 +210,6 @@ partyJoin.each(function(d) {
     .transition().duration(200).delay(function(d, i) {
       return i * 10;
     })
-    // .attr('transform', function(d, idx) {
-    //   var transformString = '';
-    //   var rank = _.findIndex(arcSeatTotals, function(v) { return v > idx; });
-    //   var position = idx - (arcSeatTotals[rank - 1] || 0);
-    //   var angle = dataArc.endAngle;
-    //   angle += position * ringSteps[rank];
-    //   transformString += 'translate(0,'+(50 + rank * seatSpace)+')';
-    //   transformString += 'rotate('+(180 + radToDeg(angle))+')';
-    //   return transformString;
-    // })
-    // .transition().duration(200)
     .attr('transform', function(d, idx) {
       var transformString = '';
       var rank = _.findIndex(arcSeatTotals, function(v) { return v > idx; });
