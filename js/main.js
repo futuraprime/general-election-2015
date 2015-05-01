@@ -204,7 +204,7 @@ SeatManager.prototype._generateSeats = function() {
     arc.centerAngle = arc.startAngle - arc.sweep / 2;
     arc.seats = [];
     return arc.sweep;
-  });// .reverse();
+  }); //.reverse();
   
   // now we allocate all the seats to the parties based on the angles
   // with a rule that each party gets at least one seat in every ring
@@ -262,8 +262,8 @@ partyJoin.each(function(d) {
         return parties[d.key].color;
       }
     })
-    .transition().duration(200).delay(function(d, i) {
-      return i * 10;
+    .transition().duration(500).delay(function(d, i) {
+      return Math.random() * 2500 + i;
     })
     .attr('transform', function(d, idx) {
       var seatData = seatManager.requestSeat(d.key, idx);
