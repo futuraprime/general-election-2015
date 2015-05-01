@@ -162,13 +162,99 @@ partyJoin.enter().append('svg:g')
 var seatSize = 10;
 var seatSpace = 12;
 
+function radToDeg(rad) { return 180 * rad / Math.PI; }
+
+// the SeatManager is in charge of distributing the seats around the ring
+function SeatManager(size, space, radii, arcGroups) {
+  this.size = size;
+  this.space = space;
+  this.radii = radii;
+  this.arcGroups = arcGroups;
+
+  this.arcs = {};
+  for(var i=0,l=arcGroups.length;i<l;i++) {
+    this.arcs[arcGroups[i].data.key] = arcGroups[i];
+  }
+
+  this._generateSeats();
+}
+SeatManager.prototype._generateSeats = function() {
+  var self = this;
+  console.log(this.arcs);
+
+  // this figures out where all the seats should go
+  var ringSeats = _.map(this.radii, function(r) {
+    var circ = Math.PI * 2 * r;
+    // this ensures an even distribution of seats in each arc
+    var seats = Math.floor(circ / self.space);
+    var step = Math.PI * 2 / seats;
+    var angles = _.range(0, Math.PI * 2, step);
+    return _.map(angles, function(angle) {
+      return {
+        radius : r,
+        angle : angle
+      };
+    });
+  });
+
+  console.log(ringSeats);
+
+  // we want these from the smallest to the largest.
+  // also, we're going to use this iteration to calculate some useful
+  // values we'll want later on
+  var orderedArcs = _.sortBy(this.arcs, function(arc) {
+    arc.sweep = arc.startAngle - arc.endAngle;
+    arc.centerAngle = arc.startAngle - arc.sweep / 2;
+    arc.seats = [];
+    return arc.sweep;
+  });// .reverse();
+  console.log(orderedArcs);
+  
+  // now we allocate all the seats to the parties based on the angles
+  // with a rule that each party gets at least one seat in every ring
+  //
+  // note: this is not an especially efficient approach and is likely
+  // to cause performance issues down the road
+  _.each(ringSeats, function(ring) {
+    var toAllocate = _.clone(ring);
+    _.each(orderedArcs, function(arc) {
+      // we're going to order all the seats by their proximity to the
+      // central angle of this party
+      var orderedAllocated = _.sortBy(toAllocate, function(seat) {
+        return Math.abs(arc.centerAngle - seat.angle);
+      });
+      // take the seat out of the toAllocate array and begin the seat
+      // array for this party in this ring
+      var seats = toAllocate.splice(toAllocate.indexOf(orderedAllocated[0]), 1);
+
+      // now grab all the seats inside the arc. since we started from
+      // the smallest party, this should still leave every party with
+      // at least one seat in every ring
+
+      // note: we're iterating backwards over the array to be sure we
+      // don't change indexes as we remove items from the array
+      for(var i=toAllocate.length - 1;i>=0;--i) {
+        if(toAllocate[i].angle > arc.endAngle &&
+          toAllocate[i].angle <= arc.startAngle) {
+          seats = seats.concat(toAllocate.splice(i, 1));
+        }
+      }
+
+      arc.seats = arc.seats.concat(seats);
+    });
+  });
+};
+SeatManager.prototype.requestSeat = function(key, index) {
+  return this.arcs[key].seats[index];
+};
+
+var seatManager = new SeatManager(10, 12, _.range(50, 390, 12), partyArcs);
+
 var ringRadii = _.range(50, 390, seatSpace);
 var ringSteps = _.map(ringRadii, function(v, idx) {
   return seatSpace / v;
 });
 var anglePadding = 0.01;
-
-function radToDeg(rad) { return 180 * rad / Math.PI; }
 
 partyJoin.each(function(d) {
   var el = d3.select(this);
@@ -211,13 +297,14 @@ partyJoin.each(function(d) {
       return i * 10;
     })
     .attr('transform', function(d, idx) {
+      var seatData = seatManager.requestSeat(d.key, idx);
       var transformString = '';
-      var rank = _.findIndex(arcSeatTotals, function(v) { return v > idx; });
-      var position = idx - (arcSeatTotals[rank - 1] || 0);
-      var angle = endAngle;
-      angle += position * ringSteps[rank];
-      transformString += 'rotate('+(180 + radToDeg(angle))+')';
-      transformString += 'translate(0,'+(50 + rank * seatSpace)+')';
+      // var rank = _.findIndex(arcSeatTotals, function(v) { return v > idx; });
+      // var position = idx - (arcSeatTotals[rank - 1] || 0);
+      // var angle = endAngle;
+      // angle += position * ringSteps[rank];
+      transformString += 'rotate('+(180 + radToDeg(seatData.angle))+')';
+      transformString += 'translate(0,'+(seatData.radius)+')';
       return transformString;
     });
 });
