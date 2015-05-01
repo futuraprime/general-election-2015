@@ -188,6 +188,9 @@ SeatManager.prototype._generateSeats = function() {
     var seats = Math.floor(circ / self.space);
     var step = Math.PI * 2 / seats;
     var angles = _.range(0, Math.PI * 2, step);
+    angles = _.map(angles, function(angle) {
+      return angle + step / 2;
+    });
     return _.map(angles, function(angle) {
       return {
         radius : r,
