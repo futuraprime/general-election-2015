@@ -113,8 +113,8 @@ var arcLayout = d3.layout.pie()
   .value(function(d) { return d.share; });
 
 var arc = d3.svg.arc()
-  .innerRadius(220)
-  .outerRadius(260);
+  .innerRadius(148)
+  .outerRadius(188);
 
 var arcContainer = chart.append('g')
   .attr('transform', getTransformString(width/2, height/2));
@@ -243,7 +243,9 @@ SeatManager.prototype.requestSeat = function(key, index) {
   return this.arcs[key].seats[index];
 };
 
-var seatManager = new SeatManager(seatSize, seatSpace, _.range(50, 390, seatSpace), partyArcs);
+var seatManager = new SeatManager(seatSize, seatSpace,
+  _.range(50, 145, seatSpace).concat(_.range(197, 390, seatSpace)),
+  partyArcs);
 
 partyJoin.each(function(d) {
   var el = d3.select(this);
