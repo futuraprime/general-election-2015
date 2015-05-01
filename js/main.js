@@ -159,8 +159,8 @@ var partyJoin = seatGroup.selectAll('.seats-party')
 partyJoin.enter().append('svg:g')
   .classed('seats-party', true);
 
-var seatSize = 10;
-var seatSpace = 12;
+var seatSize = 9;
+var seatSpace = 11;
 
 function radToDeg(rad) { return 180 * rad / Math.PI; }
 
@@ -243,7 +243,7 @@ SeatManager.prototype.requestSeat = function(key, index) {
   return this.arcs[key].seats[index];
 };
 
-var seatManager = new SeatManager(10, 12, _.range(50, 390, 12), partyArcs);
+var seatManager = new SeatManager(seatSize, seatSpace, _.range(50, 390, seatSpace), partyArcs);
 
 partyJoin.each(function(d) {
   var el = d3.select(this);
