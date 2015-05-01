@@ -180,7 +180,6 @@ function SeatManager(size, space, radii, arcGroups) {
 }
 SeatManager.prototype._generateSeats = function() {
   var self = this;
-  console.log(this.arcs);
 
   // this figures out where all the seats should go
   var ringSeats = _.map(this.radii, function(r) {
@@ -197,8 +196,6 @@ SeatManager.prototype._generateSeats = function() {
     });
   });
 
-  console.log(ringSeats);
-
   // we want these from the smallest to the largest.
   // also, we're going to use this iteration to calculate some useful
   // values we'll want later on
@@ -208,7 +205,6 @@ SeatManager.prototype._generateSeats = function() {
     arc.seats = [];
     return arc.sweep;
   });// .reverse();
-  console.log(orderedArcs);
   
   // now we allocate all the seats to the parties based on the angles
   // with a rule that each party gets at least one seat in every ring
