@@ -239,8 +239,7 @@ SeatManager.prototype._generateSeats = function() {
           seats = seats.concat(toAllocate.splice(i, 1));
         }
       }
-
-      arc.seats = arc.seats.concat(seats);
+      arc.seats = arc.seats.concat(_.sortBy(seats, 'angle'));
     });
   });
 };
@@ -250,12 +249,6 @@ SeatManager.prototype.requestSeat = function(key, index) {
 
 var seatManager = new SeatManager(10, 12, _.range(50, 390, 12), partyArcs);
 
-var ringRadii = _.range(50, 390, seatSpace);
-var ringSteps = _.map(ringRadii, function(v, idx) {
-  return seatSpace / v;
-});
-var anglePadding = 0.01;
-
 partyJoin.each(function(d) {
   var el = d3.select(this);
   // move this to the center...
@@ -263,26 +256,6 @@ partyJoin.each(function(d) {
 
   var seatJoin = el.selectAll('.seat')
     .data(d.values);
-
-  var dataArc = _.find(partyArcs, function(pArc) {
-    return pArc.data.key === d.key;
-  });
-
-  var startAngle = dataArc.startAngle - anglePadding;
-  var endAngle = dataArc.endAngle + anglePadding;
-  
-  // so now we have start and end angles, now we've got to figure out
-  // how many seats per arc
-  // the length of the arc is r * angle width
-  // console.log(50 * (dataArc.startAngle - dataArc.endAngle), d.key);
-  var arcSeats = _.map(ringRadii, function(radius) {
-    var len = radius * (startAngle - endAngle);
-    return Math.ceil(len / seatSpace);
-  });
-  var arcSeatTotals = _.map(arcSeats, function(v, idx) {
-    return _.sum(arcSeats.slice(0, idx + 1));
-  });
-  // console.log(arcSeats, arcSeatTotals, d.key);
 
   seatJoin.enter()
     .append('svg:rect')
@@ -299,10 +272,6 @@ partyJoin.each(function(d) {
     .attr('transform', function(d, idx) {
       var seatData = seatManager.requestSeat(d.key, idx);
       var transformString = '';
-      // var rank = _.findIndex(arcSeatTotals, function(v) { return v > idx; });
-      // var position = idx - (arcSeatTotals[rank - 1] || 0);
-      // var angle = endAngle;
-      // angle += position * ringSteps[rank];
       transformString += 'rotate('+(180 + radToDeg(seatData.angle))+')';
       transformString += 'translate(0,'+(seatData.radius)+')';
       return transformString;
